@@ -5,22 +5,27 @@
 from pymongo import MongoClient
 
 
-def log_stats() -> None:
-    """
-    Provides some stats about Nginx logs stored in MongoDB
-    """
-    stats = ""
+def print_nginx_request_logs(mongo_collection):
+    '''Prints stats about Nginx request logs.
+    '''
+    print('{} logs'.format(mongo_collection.count_documents({})))
+    print('Methods:')
+    methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+    for method in methods:
+        req_count = len(list(mongo_collection.find({'method': method})))
+        print('\tmethod {}: {}'.format(method, req_count))
+    status_checks_count = len(list(
+        mongo_collection.find({'method': 'GET', 'path': '/status'})
+    ))
+    print('{} status check'.format(status_checks_count))
+
+
+def run():
+    '''Provides some stats about Nginx logs stored in MongoDB.
+    '''
     client = MongoClient('mongodb://127.0.0.1:27017')
-    nginx_collection = client.logs.nginx
-    method = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    stats += "{} logs\nMethods:\n".format(nginx_collection.count_documents({}))
-    for m in method:
-        method_count = nginx_collection.count_documents({"method": m})
-        stats += '\tmethod {}: {}\n'.format(m, method_count)
-    stats += "{} status check".format(
-            nginx_collection.count_documents({"path": "/status"}))
-    print(stats)
+    print_nginx_request_logs(client.logs.nginx)
 
 
 if __name__ == '__main__':
-    log_stats()
+    run()
