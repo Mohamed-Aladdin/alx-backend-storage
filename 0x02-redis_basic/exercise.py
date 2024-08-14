@@ -80,7 +80,7 @@ class Cache:
         """method should generate a random key (e.g. using uuid) store
         the input data in Redis using the random key and return the key.
         """
-        key = uuid.uuid4()
+        key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
 
