@@ -19,18 +19,14 @@ def url_access_count(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(url):
         """wrapper function"""
-        key = "cached:" + url
-        cached_value = r.get(key)
-        if cached_value:
-            return cached_value.decode("utf-8")
-
-        key_count = "count:" + url
-        html_content = method(url)
-
-        r.incr(key_count)
-        r.set(key, html_content, ex=10)
-        r.expire(key, 10)
-        return html_content
+        r.incr(f'count:{url}')
+        result = r.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
+        result = method(url)
+        r.set(f'count:{url}', 0)
+        r.setex(f'result:{url}', 10, result)
+        return result
     return wrapper
 
 
