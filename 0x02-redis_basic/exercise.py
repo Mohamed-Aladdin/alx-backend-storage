@@ -22,6 +22,7 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wrapper
 
+
 def call_history(method: Callable) -> Callable:
     """decorator to store the history of inputs
     and outputs for a particular function.
@@ -35,6 +36,7 @@ def call_history(method: Callable) -> Callable:
         self._redis.rpush(method.__qualname__ + ":outputs", output)
         return output
     return wrapper
+
 
 def replay(fn: Callable):
     """method to display the history of calls of a particular function."""
@@ -82,7 +84,8 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Optional[Callable[[bytes], Union[str, bytes, int, float]]] = None) -> Optional[Union[str, int, float, bytes]]:
+    def get(self, key: str,
+            fn: Optional[callable] = None) -> Union[str, bytes, int, float]:
         """method that take a key string argument and an optional
         Callable argument named fn. This callable will be used to
         convert the data back to the desired format.
