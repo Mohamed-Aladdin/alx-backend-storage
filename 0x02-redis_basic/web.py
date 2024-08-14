@@ -17,12 +17,12 @@ def url_access_count(method: Callable) -> Callable:
     the result with an expiration time of 10 seconds.
     """
     @wraps(method)
-    def wrapper(url):
+    def wrapper(url: str) -> str:
         """wrapper function"""
         r.incr(f'count:{url}')
         result = r.get(f'result:{url}')
         if result:
-            return result.decode('utf-8')
+            return result.decode("utf-8")
         result = method(url)
         r.set(f'count:{url}', 0)
         r.setex(f'result:{url}', 10, result)
