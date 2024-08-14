@@ -17,10 +17,9 @@ def url_access_count(method):
     """
     @wraps(method)
     def wrapper(url):
-        """wrapper for the decorated fn."""
+        """wrapper function"""
         key = "cached:" + url
         cached_value = r.get(key)
-
         if cached_value:
             return cached_value.decode("utf-8")
 
@@ -39,8 +38,8 @@ def get_page(url: str) -> str:
     """method that uses the requests module to obtain
     the HTML content of a particular URL and returns it.
     """
-    res = requests.get(url)
-    return res.text
+    results = requests.get(url)
+    return results.text
 
 
 if __name__ == "__main__":
