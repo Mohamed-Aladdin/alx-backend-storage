@@ -4,13 +4,14 @@
 
 import redis
 import requests
+from typing import Callable
 from functools import wraps
 
 
 r = redis.Redis()
 
 
-def url_access_count(method):
+def url_access_count(method: Callable) -> Callable:
     """decorator to track how many times a particular URL
     was accessed inthe key "count:{url}" and cache
     the result with an expiration time of 10 seconds.
@@ -42,5 +43,5 @@ def get_page(url: str) -> str:
     return results.text
 
 
-# if __name__ == "__main__":
-#     get_page('http://slowwly.robertomurray.co.uk')
+if __name__ == "__main__":
+    get_page('http://slowwly.robertomurray.co.uk')
